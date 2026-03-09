@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
+import { supabase } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
-const dataFilePath = path.join(process.cwd(), 'data', 'projects.json')
+const PASSWORD = 'S@hariar123'
 
 export async function GET() {
     try {
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const projects = JSON.parse(fileContents)
-        return NextResponse.json(projects)
+        const { data, error } = await supabase
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: true })
+
+        if (error) throw error
+        return NextResponse.json(data)
     } catch (error) {
         return NextResponse.json({ error: 'Failed to read projects' }, { status: 500 })
     }
@@ -18,15 +21,19 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const newProject = await request.json()
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const projects = JSON.parse(fileContents)
+        const { password, ...newProject } = await request.json()
+        if (password !== PASSWORD) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
-        newProject.id = `proj-${Date.now()}`
-        projects.push(newProject)
+        const { data, error } = await supabase
+            .from('projects')
+            .insert([newProject])
+            .select()
+            .single()
 
-        await fs.writeFile(dataFilePath, JSON.stringify(projects, null, 2), 'utf8')
-        return NextResponse.json(newProject, { status: 201 })
+        if (error) throw error
+        return NextResponse.json(data, { status: 201 })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to create project' }, { status: 500 })
     }
@@ -34,18 +41,21 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const updatedProject = await request.json()
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const projects = JSON.parse(fileContents)
-
-        const index = projects.findIndex((p: any) => p.id === updatedProject.id)
-        if (index === -1) {
-            return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+        const { password, ...updatedProject } = await request.json()
+        if (password !== PASSWORD) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        projects[index] = updatedProject
-        await fs.writeFile(dataFilePath, JSON.stringify(projects, null, 2), 'utf8')
-        return NextResponse.json(updatedProject)
+        const { id, ...projectData } = updatedProject
+        const { data, error } = await supabase
+            .from('projects')
+            .update(projectData)
+            .eq('id', id)
+            .select()
+            .single()
+
+        if (error) throw error
+        return NextResponse.json(data)
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update project' }, { status: 500 })
     }
@@ -57,12 +67,12 @@ export async function DELETE(request: Request) {
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 })
 
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        let projects = JSON.parse(fileContents)
+        const { error } = await supabase
+            .from('projects')
+            .delete()
+            .eq('id', id)
 
-        projects = projects.filter((p: any) => p.id !== id)
-        await fs.writeFile(dataFilePath, JSON.stringify(projects, null, 2), 'utf8')
-
+        if (error) throw error
         return NextResponse.json({ success: true })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 })

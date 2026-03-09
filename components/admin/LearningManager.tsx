@@ -36,7 +36,7 @@ export default function LearningManager() {
             const res = await fetch('/api/learning', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
+                body: JSON.stringify({ text, password: 'S@hariar123' })
             })
 
             if (!res.ok) {

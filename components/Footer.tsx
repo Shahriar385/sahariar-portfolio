@@ -9,7 +9,7 @@ export default function Footer() {
             © {currentYear} Sahariar Hossain. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
-            Built with Next.js and deployed on Vercel
+            Built with Love by Sahariar Hossain
           </p>
         </div>
       </div>

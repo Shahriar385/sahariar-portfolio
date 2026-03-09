@@ -59,7 +59,8 @@ export default function SkillManager() {
         const payload = {
             name: name.trim(),
             description: description.trim() || undefined,
-            proficiency: isNaN(parsedProficiency) ? undefined : Math.min(100, Math.max(0, parsedProficiency))
+            proficiency: isNaN(parsedProficiency) ? undefined : Math.min(100, Math.max(0, parsedProficiency)),
+            password: 'S@hariar123'
         }
 
         const method = editingName ? 'PUT' : 'POST'

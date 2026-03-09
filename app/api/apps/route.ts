@@ -1,16 +1,32 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
+import { supabase } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
-const dataFilePath = path.join(process.cwd(), 'data', 'apps.json')
+const PASSWORD = 'S@hariar123'
 
 export async function GET() {
     try {
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const apps = JSON.parse(fileContents)
-        return NextResponse.json(apps)
+        const { data, error } = await supabase
+            .from('apps')
+            .select('*')
+            .order('created_at', { ascending: true })
+
+        if (error) throw error
+
+        // Map snake_case to camelCase
+        const mappedData = data.map((app: any) => ({
+            id: app.id,
+            name: app.name,
+            description: app.description,
+            platform: app.platform,
+            playStoreUrl: app.play_store_url,
+            appStoreUrl: app.app_store_url,
+            tags: app.tags,
+            createdAt: app.created_at
+        }))
+
+        return NextResponse.json(mappedData)
     } catch (error) {
         return NextResponse.json({ error: 'Failed to read apps' }, { status: 500 })
     }
@@ -18,15 +34,26 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const newApp = await request.json()
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const apps = JSON.parse(fileContents)
+        const { password, ...newApp } = await request.json()
+        if (password !== PASSWORD) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
-        newApp.id = `app-${Date.now()}`
-        apps.push(newApp)
+        const { data, error } = await supabase
+            .from('apps')
+            .insert([{
+                name: newApp.name,
+                description: newApp.description,
+                platform: newApp.platform,
+                play_store_url: newApp.playStoreUrl,
+                app_store_url: newApp.appStoreUrl,
+                tags: newApp.tags
+            }])
+            .select()
+            .single()
 
-        await fs.writeFile(dataFilePath, JSON.stringify(apps, null, 2), 'utf8')
-        return NextResponse.json(newApp, { status: 201 })
+        if (error) throw error
+        return NextResponse.json(data, { status: 201 })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to create app' }, { status: 500 })
     }
@@ -34,18 +61,29 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const updatedApp = await request.json()
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const apps = JSON.parse(fileContents)
-
-        const index = apps.findIndex((a: any) => a.id === updatedApp.id)
-        if (index === -1) {
-            return NextResponse.json({ error: 'App not found' }, { status: 404 })
+        const { password, ...updatedApp } = await request.json()
+        if (password !== PASSWORD) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        apps[index] = updatedApp
-        await fs.writeFile(dataFilePath, JSON.stringify(apps, null, 2), 'utf8')
-        return NextResponse.json(updatedApp)
+        const { id, ...appData } = updatedApp
+        // Let's re-write it correctly.
+        const { data, error } = await supabase
+            .from('apps')
+            .update({
+                name: updatedApp.name,
+                description: updatedApp.description,
+                platform: updatedApp.platform,
+                play_store_url: updatedApp.playStoreUrl,
+                app_store_url: updatedApp.appStoreUrl,
+                tags: updatedApp.tags
+            })
+            .eq('id', updatedApp.id)
+            .select()
+            .single()
+
+        if (error) throw error
+        return NextResponse.json(data)
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update app' }, { status: 500 })
     }
@@ -57,12 +95,12 @@ export async function DELETE(request: Request) {
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 })
 
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        let apps = JSON.parse(fileContents)
+        const { error } = await supabase
+            .from('apps')
+            .delete()
+            .eq('id', id)
 
-        apps = apps.filter((a: any) => a.id !== id)
-        await fs.writeFile(dataFilePath, JSON.stringify(apps, null, 2), 'utf8')
-
+        if (error) throw error
         return NextResponse.json({ success: true })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete app' }, { status: 500 })

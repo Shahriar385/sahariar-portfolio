@@ -15,6 +15,8 @@ export default function AppManager() {
     const [playStoreUrl, setPlayStoreUrl] = useState('')
     const [appStoreUrl, setAppStoreUrl] = useState('')
     const [tags, setTags] = useState('')
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState(false)
 
     useEffect(() => {
         fetchApps()
@@ -36,6 +38,8 @@ export default function AppManager() {
         setPlayStoreUrl('')
         setAppStoreUrl('')
         setTags('')
+        setError('')
+        setSuccess(false)
     }
 
     const handleEdit = (app: AppType) => {
@@ -56,6 +60,8 @@ export default function AppManager() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setError('')
+        setSuccess(false)
 
         const payload = {
             id: editingId, // will be ignored by POST, used by PUT
@@ -64,25 +70,29 @@ export default function AppManager() {
             platform,
             playStoreUrl: playStoreUrl.trim() || undefined,
             appStoreUrl: appStoreUrl.trim() || undefined,
-            tags: tags.split(',').map(t => t.trim()).filter(Boolean)
+            tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+            password: 'S@hariar123'
         }
 
-        if (editingId) {
-            await fetch('/api/apps', {
-                method: 'PUT',
+        try {
+            const res = await fetch('/api/apps', {
+                method: editingId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
-        } else {
-            await fetch('/api/apps', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-        }
 
-        resetForm()
-        fetchApps()
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.error || 'Failed to save app')
+            }
+
+            setSuccess(true)
+            setTimeout(() => setSuccess(false), 3000)
+            resetForm()
+            fetchApps()
+        } catch (err: any) {
+            setError(err.message)
+        }
     }
 
     return (
@@ -126,6 +136,9 @@ export default function AppManager() {
                         <label className="mb-1 block text-sm font-medium">Tags (comma separated)</label>
                         <input required value={tags} onChange={e => setTags(e.target.value)} placeholder="Flutter, Firebase, Android" className="w-full rounded border border-border bg-background px-3 py-2 text-sm" />
                     </div>
+
+                    {error && <p className="text-sm font-medium text-red-500">{error}</p>}
+                    {success && <p className="text-sm font-medium text-green-500">Operation successful!</p>}
 
                     <div className="flex gap-2 pt-2">
                         <button type="submit" className="rounded bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90">

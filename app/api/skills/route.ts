@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
+import { supabase } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
-const dataFilePath = path.join(process.cwd(), 'data', 'skills.json')
+const PASSWORD = 'S@hariar123'
 
 export interface SkillType {
+    id?: string
     name: string
     description?: string
     proficiency?: number
@@ -14,9 +14,13 @@ export interface SkillType {
 
 export async function GET() {
     try {
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const skills: SkillType[] = JSON.parse(fileContents)
-        return NextResponse.json(skills)
+        const { data, error } = await supabase
+            .from('skills')
+            .select('*')
+            .order('name', { ascending: true })
+
+        if (error) throw error
+        return NextResponse.json(data)
     } catch (error) {
         return NextResponse.json({ error: 'Failed to read skills' }, { status: 500 })
     }
@@ -24,28 +28,33 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const { name, description, proficiency } = await request.json()
-        if (!name || typeof name !== 'string') {
+        const { password, ...newSkill } = await request.json()
+        if (password !== PASSWORD) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        if (!newSkill.name || typeof newSkill.name !== 'string') {
             return NextResponse.json({ error: 'Invalid skill name' }, { status: 400 })
         }
 
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const skills: SkillType[] = JSON.parse(fileContents)
+        const { data, error } = await supabase
+            .from('skills')
+            .insert([{
+                name: newSkill.name.trim(),
+                description: newSkill.description?.trim(),
+                proficiency: typeof newSkill.proficiency === 'number' ? Math.min(100, Math.max(0, newSkill.proficiency)) : undefined
+            }])
+            .select()
+            .single()
 
-        // Validate uniqueness by name
-        if (skills.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-            return NextResponse.json({ error: 'Skill already exists' }, { status: 400 })
+        if (error) {
+            if (error.code === '23505') {
+                return NextResponse.json({ error: 'Skill already exists' }, { status: 400 })
+            }
+            throw error
         }
 
-        const newSkill: SkillType = {
-            name: name.trim(),
-            description: description?.trim(),
-            proficiency: typeof proficiency === 'number' ? Math.min(100, Math.max(0, proficiency)) : undefined
-        }
-        skills.push(newSkill)
-        await fs.writeFile(dataFilePath, JSON.stringify(skills, null, 2), 'utf8')
-
-        return NextResponse.json({ success: true, skill: newSkill })
+        return NextResponse.json({ success: true, skill: data })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to create skill' }, { status: 500 })
     }
@@ -53,27 +62,27 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const { name, description, proficiency } = await request.json()
-        if (!name || typeof name !== 'string') {
+        const { password, ...updatedSkill } = await request.json()
+        if (password !== PASSWORD) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        if (!updatedSkill.name || typeof updatedSkill.name !== 'string') {
             return NextResponse.json({ error: 'Invalid skill name' }, { status: 400 })
         }
 
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        const skills: SkillType[] = JSON.parse(fileContents)
+        const { data, error } = await supabase
+            .from('skills')
+            .update({
+                description: updatedSkill.description?.trim(),
+                proficiency: typeof updatedSkill.proficiency === 'number' ? Math.min(100, Math.max(0, updatedSkill.proficiency)) : undefined
+            })
+            .ilike('name', updatedSkill.name)
+            .select()
+            .single()
 
-        const index = skills.findIndex(s => s.name.toLowerCase() === name.toLowerCase())
-        if (index === -1) {
-            return NextResponse.json({ error: 'Skill not found' }, { status: 404 })
-        }
-
-        skills[index] = {
-            name: name.trim(),
-            description: description?.trim(),
-            proficiency: typeof proficiency === 'number' ? Math.min(100, Math.max(0, proficiency)) : undefined
-        }
-        await fs.writeFile(dataFilePath, JSON.stringify(skills, null, 2), 'utf8')
-
-        return NextResponse.json({ success: true, skill: skills[index] })
+        if (error) throw error
+        return NextResponse.json({ success: true, skill: data })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update skill' }, { status: 500 })
     }
@@ -85,12 +94,12 @@ export async function DELETE(request: Request) {
         const skillName = searchParams.get('name')
         if (!skillName) return NextResponse.json({ error: 'Skill name is required' }, { status: 400 })
 
-        const fileContents = await fs.readFile(dataFilePath, 'utf8')
-        let skills: SkillType[] = JSON.parse(fileContents)
+        const { error } = await supabase
+            .from('skills')
+            .delete()
+            .ilike('name', skillName)
 
-        skills = skills.filter((s) => s.name.toLowerCase() !== skillName.toLowerCase())
-        await fs.writeFile(dataFilePath, JSON.stringify(skills, null, 2), 'utf8')
-
+        if (error) throw error
         return NextResponse.json({ success: true })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete skill' }, { status: 500 })
