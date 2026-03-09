@@ -1,0 +1,26 @@
+[
+    {
+        "id": "app-1111",
+        "name": "MultiWash",
+        "description": "Cross-platform laundry management app connecting customers with service providers. Live on both stores.",
+        "platform": "both",
+        "playStoreUrl": "#",
+        "appStoreUrl": "#",
+        "tags": [
+            "Flutter",
+            "Firebase"
+        ]
+    },
+    {
+        "id": "app-2222",
+        "name": "Krishixpress",
+        "description": "Agricultural supply-chain management app built natively for Android with fast, reliable performance.",
+        "platform": "android",
+        "playStoreUrl": "#",
+        "appStoreUrl": "",
+        "tags": [
+            "Android",
+            "Kotlin"
+        ]
+    }
+]

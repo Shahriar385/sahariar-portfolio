@@ -1,0 +1,62 @@
+[
+  {
+    "id": "proj-1",
+    "name": "Krishixpress",
+    "description": "A mobile application for managing agricultural supply chain operations. Built with native Android to provide fast and reliable performance.",
+    "tags": [
+      "Android",
+      "Firebase",
+      "REST API"
+    ],
+    "link": "#",
+    "github": "#"
+  },
+  {
+    "id": "proj-2",
+    "name": "MultiWash",
+    "description": "Cross-platform laundry management app connecting customers with service providers. Implemented using Flutter for seamless iOS and Android experience.",
+    "tags": [
+      "Flutter",
+      "Firebase",
+      "Payment Integration"
+    ],
+    "link": "#",
+    "github": "#"
+  },
+  {
+    "id": "proj-3",
+    "name": "SilentBridge",
+    "description": "A communication platform designed for accessibility. Native Android app focused on providing seamless communication for users with different abilities.",
+    "tags": [
+      "Android",
+      "Kotlin",
+      "Accessibility"
+    ],
+    "link": "#",
+    "github": "#"
+  },
+  {
+    "id": "proj-4",
+    "name": "BusinessWallet",
+    "description": "Blockchain-based wallet and transaction management system. Exploring Web3 technologies and smart contracts for secure financial operations.",
+    "tags": [
+      "Solidity",
+      "Web3",
+      "Blockchain"
+    ],
+    "link": "#",
+    "github": "#"
+  },
+  {
+    "id": "proj-5",
+    "name": "TaskFlow",
+    "description": "Productivity app for task management with real-time synchronization. Built with Flutter and Firebase for cross-platform availability.",
+    "tags": [
+      "Flutter",
+      "Firebase",
+      "Real-time Sync"
+    ],
+    "link": "#",
+    "github": "#"
+  }
+]
