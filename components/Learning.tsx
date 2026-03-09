@@ -17,7 +17,7 @@ export default function Learning() {
   }, [])
 
   return (
-    <section id="learning" className="min-h-[100dvh] w-full flex items-center snap-start snap-always">
+    <section id="learning" className="min-h-[100dvh] w-full flex items-center border-t border-border snap-start snap-always">
       <div className="w-full mx-auto max-w-[1100px] px-6 py-20">
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl transition-all duration-700">
           Currently Learning

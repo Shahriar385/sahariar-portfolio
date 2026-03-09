@@ -38,15 +38,15 @@ export default function Skills() {
   }, [activeSkill])
 
   return (
-    <section id="skills" className="min-h-[100dvh] w-full flex items-center snap-start snap-always">
+    <section id="skills" className="min-h-[100dvh] w-full flex items-center border-t border-border snap-start snap-always">
       <div className="w-full mx-auto max-w-[1100px] px-6 py-20">
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Skills
         </h2>
 
-        <div className="mt-12 flex flex-col md:flex-row items-start gap-12">
+        <div className="mt-12 flex flex-col md:flex-row items-start gap-8 md:gap-12">
           {/* Left Side: Skills Grid */}
-          <div className="flex-1 flex flex-wrap content-start gap-3">
+          <div className="w-full md:flex-1 flex flex-wrap content-start gap-3">
             {loading ? (
               // Skeleton loaders
               [1, 2, 3, 4, 5, 6].map((i) => (
@@ -105,9 +105,9 @@ export default function Skills() {
           </div>
 
           {/* Right Side / Bottom: Proficiency Display */}
-          <div className="flex-1 pt-6 md:pt-0 min-h-[140px]">
+          <div className="w-full md:flex-1 pt-6 md:pt-0 min-h-[140px]">
             <div
-              className="w-full max-w-sm rounded border border-border bg-secondary/10 px-6 flex flex-col justify-center transition-all duration-300 ease-in-out relative overflow-hidden"
+              className="w-full md:max-w-sm rounded border border-border bg-secondary/10 px-6 flex flex-col justify-center transition-all duration-300 ease-in-out relative overflow-hidden mx-auto md:mx-0"
               style={{ height: activeSkill ? (activeSkill.proficiency !== undefined ? 136 : 96) : 80 }}
             >
               <div className="w-full absolute left-0 right-0 px-6 top-1/2 -translate-y-1/2">
