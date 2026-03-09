@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AppType } from './LiveApps'
+import { AppType } from '../LiveApps'
 
 export default function AppManager() {
     const [apps, setApps] = useState<AppType[]>([])
