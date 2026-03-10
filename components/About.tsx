@@ -1,8 +1,8 @@
 export default function About() {
   const highlights = [
-    'Mobile App Development',
     'Native Android Development',
-    'Blockchain Learning',
+    'Flutter (Cross-platform) Development',
+    'Learning Blockchain',
   ]
 
   return (
@@ -14,10 +14,10 @@ export default function About() {
 
         <div className="mt-12 space-y-8">
           <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            I'm an 18-year-old software engineer from Bangladesh focused on building
+            I'm an 18-year-old Software Engineer from Bangladesh focused on building
             high-quality mobile applications. I have experience in native Android
-            development and cross-platform mobile apps. Currently I'm exploring
-            blockchain development and Web3 technologies.
+            development and Flutter (cross-platform) development. Currently I'm exploring
+            Blockchain development and Web3 technologies.
           </p>
 
           <div className="space-y-3">

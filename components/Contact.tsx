@@ -25,13 +25,30 @@ export default function Contact() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    setTimeout(() => {
-      setSubmitSuccess(true)
-      setFormState({ name: '', email: '', message: '' })
+    try {
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formState),
+      });
+
+      if (response.ok) {
+        setSubmitSuccess(true)
+        setFormState({ name: '', email: '', message: '' })
+        setTimeout(() => setSubmitSuccess(false), 3000)
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to send message:', errorData.error);
+        alert('Failed to send message. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('An error occurred. Please try again later.');
+    } finally {
       setIsSubmitting(false)
-      setTimeout(() => setSubmitSuccess(false), 3000)
-    }, 1000)
+    }
   }
 
   return (

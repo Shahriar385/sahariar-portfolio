@@ -37,6 +37,7 @@
   --sidebar-accent-foreground: #000000;
   --sidebar-border: #e5e5e5;
   --sidebar-ring: #000000;
+  --dot-color: #000000;
 }
 
 .dark {
@@ -72,6 +73,7 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #333333;
   --sidebar-ring: #ffffff;
+  --dot-color: #ffffff;
 }
 
 @theme inline {
@@ -117,7 +119,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 transition-colors duration-300;
   }
 
   body {
@@ -144,6 +146,27 @@
     pointer-events: none;
   }
 
+  /* White backing for the image silhouette to blend with white background in dark mode */
+  .glitch-wrapper::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--hero-img);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    /* Increased slightly to pop against white backing */
+    transition: opacity 0.3s ease;
+
+    /* Dotted/Hacking Effect */
+    mask-image: radial-gradient(circle, var(--dot-color) 50%, transparent 50%);
+    mask-size: 3px 3px;
+  }
+
   /* Aggressive Image Glitch */
   .glitch-image {
     position: absolute;
@@ -158,14 +181,21 @@
     filter: grayscale(100%);
     opacity: 0.6;
     transition: opacity 0.3s ease;
+
+    /* Dotted/Hacking Effect */
+    mask-image: radial-gradient(circle, var(--dot-color) 50%, transparent 50%);
+    mask-size: 3px 3px;
   }
 
   @media (min-width: 1024px) {
 
+    .glitch-wrapper::before,
     .glitch-image,
     .glitch-image::before,
     .glitch-image::after {
-      background-position: right 15% center;
+      background-position: right 25% center;
+      -webkit-mask-position: right 25% center;
+      mask-position: right 25% center;
     }
   }
 
