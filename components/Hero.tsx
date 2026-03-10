@@ -20,7 +20,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-[100dvh] w-full flex items-center justify-center snap-start snap-always overflow-hidden">
+    <section className="relative min-h-[100dvh] w-full flex items-center justify-center snap-start snap-always overflow-hidden bg-transparent">
       {/* Background Image with Glitch Effect */}
       <div
         className="glitch-wrapper"
@@ -44,7 +44,7 @@ export default function Hero() {
               <div className="text-sm md:text-base leading-relaxed">
                 <span className="text-purple-500 dark:text-purple-400 font-normal mr-2">String</span>
                 <span className="text-foreground mr-2">greeting =</span>
-                <span className="text-green-600 dark:text-green-400 text-xl md:text-xl">"{displayText}"</span>
+                <span className="text-[rgb(165,0,0)] dark:text-green-400 text-xl md:text-xl">"{displayText}"</span>
                 <span className="text-foreground font-normal ">;</span>
               </div>
 
@@ -52,7 +52,7 @@ export default function Hero() {
                 <div className="text-sm md:text-base leading-relaxed">
                   <span className="text-purple-500 dark:text-purple-400 mr-2">String</span>
                   <span className="text-foreground mr-2">focus =</span>
-                  <span className="text-green-600 dark:text-green-400">"I build mobile apps."</span>
+                  <span className="text-[rgb(165,0,0)] dark:text-green-400">"I build mobile apps."</span>
                   <span className="text-foreground">;</span>
                 </div>
 
@@ -61,7 +61,7 @@ export default function Hero() {
                     <span className="text-purple-500 dark:text-purple-400 text-sm md:text-base">List&lt;String&gt;</span>
                     <span className="text-foreground text-sm md:text-base">specialties = Arrays.asList(</span>
                   </div>
-                  <div className="pl-4 md:pl-8 flex flex-col gap-1 text-green-600 dark:text-green-400 text-sm md:text-base">
+                  <div className="pl-4 md:pl-8 flex flex-col gap-1 text-[rgb(165,0,0)] dark:text-green-400 text-sm md:text-base">
                     <span>"Flutter Developer",</span>
                     <span>"Mobile Engineer",</span>
                     <span>"Learning Blockchain"</span>

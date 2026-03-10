@@ -125,6 +125,7 @@
   body {
     @apply bg-background text-foreground;
   }
+
 }
 
 /* Disable default view transition cross-fade so the JS clip-path animation runs alone */
@@ -135,6 +136,18 @@
 }
 
 @layer utilities {
+
+  /* All named sections (every section except the hero which has no id):
+     - Semi-transparent bg so the fixed hero image always shows through
+     - backdrop-blur for smooth frosted-glass depth
+     - isolation: isolate to prevent dot-mask compositing bleed */
+  section[id] {
+    isolation: isolate;
+    background-color: color-mix(in srgb, var(--background) 85%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
   .glitch-wrapper {
     position: fixed;
     top: 0;

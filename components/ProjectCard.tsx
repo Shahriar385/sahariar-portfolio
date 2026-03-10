@@ -16,7 +16,7 @@ export default function ProjectCard({
   github,
 }: ProjectCardProps) {
   return (
-    <TiltCard className="group flex flex-col space-y-4 border border-border p-6 transition-[border-color] duration-300 hover:border-foreground">
+    <TiltCard className="group flex flex-col space-y-4 border border-border/60 bg-transparent p-6 transition-[border-color] duration-300 hover:border-foreground">
 
       {/* Accent line that grows on hover */}
       <span

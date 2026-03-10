@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import TiltCard from './TiltCard'
 
 export interface AppType {
@@ -53,22 +52,7 @@ const platformLabel: Record<AppType['platform'], string> = {
     ios: 'iOS',
 }
 
-export default function LiveApps() {
-    const [apps, setApps] = useState<AppType[]>([])
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        fetch('/api/apps')
-            .then((res) => res.json())
-            .then((data) => {
-                setApps(data)
-                setLoading(false)
-            })
-            .catch((err) => {
-                console.error('Failed to fetch apps', err)
-                setLoading(false)
-            })
-    }, [])
+export default function LiveApps({ apps }: { apps: AppType[] }) {
 
     return (
         <section id="live-apps" className="min-h-[100dvh] w-full flex items-center border-t border-border bg-background snap-start snap-always">
@@ -79,52 +63,45 @@ export default function LiveApps() {
                 </p>
 
                 <div className="mt-12 grid gap-6 md:grid-cols-2">
-                    {loading ? (
-                        // Skeleton loaders
-                        [1, 2].map((i) => (
-                            <div key={i} className="h-64 animate-pulse border border-border bg-secondary/50 p-6" />
-                        ))
-                    ) : (
-                        apps.map((app) => (
-                            <TiltCard
-                                key={app.id}
-                                className="group flex flex-col justify-between space-y-6 border border-border p-6 transition-[border-color] duration-300 hover:border-foreground"
-                            >
-                                {/* Accent line */}
-                                <span
-                                    className="absolute left-0 top-0 z-20 h-0.5 w-0 bg-foreground transition-all duration-300 group-hover:w-full"
-                                    aria-hidden="true"
-                                />
+                    {apps.map((app) => (
+                        <TiltCard
+                            key={app.id}
+                            className="group flex flex-col justify-between space-y-6 border border-border/60 bg-transparent p-6 transition-[border-color] duration-300 hover:border-foreground"
+                        >
+                            {/* Accent line */}
+                            <span
+                                className="absolute left-0 top-0 z-20 h-0.5 w-0 bg-foreground transition-all duration-300 group-hover:w-full"
+                                aria-hidden="true"
+                            />
 
-                                <div className="relative z-20 space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-semibold tracking-tight">{app.name}</h3>
-                                        <span className="border border-border px-2 py-0.5 text-xs text-muted-foreground">
-                                            {platformLabel[app.platform]}
+                            <div className="relative z-20 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-semibold tracking-tight">{app.name}</h3>
+                                    <span className="border border-border px-2 py-0.5 text-xs text-muted-foreground">
+                                        {platformLabel[app.platform]}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm leading-relaxed text-muted-foreground">{app.description}</p>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {app.tags.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="inline-block border border-muted bg-secondary/50 px-2 py-0.5 text-xs text-muted-foreground"
+                                        >
+                                            {tag}
                                         </span>
-                                    </div>
-
-                                    <p className="text-sm leading-relaxed text-muted-foreground">{app.description}</p>
-
-                                    <div className="flex flex-wrap gap-2">
-                                        {app.tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="inline-block border border-muted bg-secondary/50 px-2 py-0.5 text-xs text-muted-foreground"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
+                                    ))}
                                 </div>
+                            </div>
 
-                                <div className="relative z-20 flex translate-y-1 flex-wrap gap-3 opacity-80 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                                    {app.playStoreUrl && app.playStoreUrl !== '#' && <PlayStoreBadge url={app.playStoreUrl} />}
-                                    {app.appStoreUrl && app.appStoreUrl !== '#' && <AppStoreBadge url={app.appStoreUrl} />}
-                                </div>
-                            </TiltCard>
-                        ))
-                    )}
+                            <div className="relative z-20 flex translate-y-1 flex-wrap gap-3 opacity-80 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                                {app.playStoreUrl && app.playStoreUrl !== '#' && <PlayStoreBadge url={app.playStoreUrl} />}
+                                {app.appStoreUrl && app.appStoreUrl !== '#' && <AppStoreBadge url={app.appStoreUrl} />}
+                            </div>
+                        </TiltCard>
+                    ))}
                 </div>
             </div>
         </section>

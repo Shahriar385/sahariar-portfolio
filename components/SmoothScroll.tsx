@@ -118,7 +118,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     }, [])
 
     return (
-        <main ref={mainRef} className="h-screen overflow-y-auto bg-background text-foreground relative">
+        <main ref={mainRef} className="h-screen overflow-y-auto bg-background text-foreground relative" style={{ zIndex: 1 }}>
             {children}
         </main>
     )
