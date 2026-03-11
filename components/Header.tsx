@@ -118,9 +118,15 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 md:hidden">
+        {/* Mobile Navigation — always mounted, animated via max-height + opacity */}
+        <div
+          className="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+          style={{
+            maxHeight: isOpen ? '400px' : '0px',
+            opacity: isOpen ? 1 : 0,
+          }}
+        >
+          <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4">
             {navItems.map((item) => (
               <a
                 key={item.label}
@@ -132,7 +138,7 @@ export default function Header() {
               </a>
             ))}
           </div>
-        )}
+        </div>
       </nav>
     </header>
   )

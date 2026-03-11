@@ -12,10 +12,17 @@ export interface AppType {
     tags: string[]
 }
 
+/** Ensures a URL is always absolute – avoids hash-relative links like site.com/#https://... */
+function toAbsoluteUrl(url: string): string {
+    if (!url) return '#'
+    if (/^https?:\/\//i.test(url)) return url
+    return `https://${url}`
+}
+
 function PlayStoreBadge({ url }: { url: string }) {
     return (
         <a
-            href={url}
+            href={toAbsoluteUrl(url)}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Get it on Google Play"
@@ -32,7 +39,7 @@ function PlayStoreBadge({ url }: { url: string }) {
 function AppStoreBadge({ url }: { url: string }) {
     return (
         <a
-            href={url}
+            href={toAbsoluteUrl(url)}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Download on the App Store"
